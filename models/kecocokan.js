@@ -5,11 +5,20 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
       type: DataTypes.STRING
     }, 
-    id_tipe: DataTypes.STRING
+    id_tipe: {
+      primaryKey: true,
+      type: DataTypes.STRING
+    }
   }, {});
   
   Kecocokan.associate = function(models) {
-    // associations can be defined here
+    Kecocokan.belongsTo(models.Sparepart, {
+      foreignKey: 'kode_sparepart'
+    });
+
+    Kecocokan.belongsTo(models.TipeKendaraan, {
+      foreignKey: 'id_tipe'
+    })
   };
   return Kecocokan;
 };

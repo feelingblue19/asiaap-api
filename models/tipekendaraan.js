@@ -19,7 +19,13 @@ module.exports = (sequelize, DataTypes) => {
    TipeKendaraan.belongsTo(models.MerkKendaraan, {
      foreignKey: 'id_merk',
      as: 'merk_kendaraan'
-    })
+    });
+    
+    TipeKendaraan.belongsToMany(models.Sparepart, {
+      through: 'Kecocokans',
+      foreignKey: 'id_tipe',
+      as: 'tipe_kendaraan'
+    });
   };
   
   return TipeKendaraan;

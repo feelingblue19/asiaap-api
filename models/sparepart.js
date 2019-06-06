@@ -15,8 +15,13 @@ module.exports = (sequelize, DataTypes) => {
     min_stok: DataTypes.INTEGER,
     gambar_sparepart: DataTypes.STRING
   }, {});
+
   Sparepart.associate = function(models) {
-    // associations can be defined here
+    Sparepart.belongsToMany(models.TipeKendaraan, {
+      through: 'Kecocokans',
+      foreignKey: 'kode_sparepart',
+      as: 'sparepart'
+    });
   };
   return Sparepart;
 };
