@@ -9,19 +9,19 @@ exports.get = async (request, result) => {
             result.status(200).json({
                 'status': 'OK',
                 'merk_kendaraan': merk
-            })
+            });
         } else {
             result.status(200).json({
                 'status': 'OK',
                 'messages': 'EMPTY'
-            })
+            });
         }
     } catch (error) {
         console.log(error);
         result.status(500).json({
             'status': 'ERROR',
             'messages': error
-        })
+        });
     }
 }
 
@@ -37,7 +37,7 @@ exports.create = async (request, result) => {
                 attributes: ['id_merk'],
                 limit: 1,
                 raw: true
-            })
+            });
 
             if (last_id.length == 0) {
                 //belum ada data merk kendaraan
@@ -69,14 +69,14 @@ exports.create = async (request, result) => {
         const merk = await model.MerkKendaraan.create({
             id_merk,
             nama_merk
-        })
+        });
 
         if (merk) {
             result.status(201).json({
                 'status': 'OK',
                 'messages': 'Merk Kendaraan berhasil ditambahkan',
                 'merk_kendaraan': merk
-            })
+            });
         }
     } catch (error) {
         //handle error saat create resource
@@ -84,8 +84,8 @@ exports.create = async (request, result) => {
         result.status(500).json({
             'status': 'ERROR',
             'messages': error
-        })
-    };
+        });
+    }
 }
 
 exports.show = async (request, result) => {
@@ -97,7 +97,7 @@ exports.show = async (request, result) => {
             where: {
                 id_merk: id_merk
             }
-        })
+        });
 
         if(merk) {
             result.status(200).json({
@@ -115,7 +115,7 @@ exports.show = async (request, result) => {
         result.status(500).json({
             'status': 'ERROR',
             'messages': error
-        })
+        });
     }
 }
 
@@ -144,14 +144,14 @@ exports.update = async (request, result) => {
             result.status(404).json({
                 'status': 'ERROR',
                 'message': 'Merk Kendaraan tidak ditemukan'
-            })
+            });
         }
     } catch (error) {
         console.log(error);
         result.status(500).json({
             'status': 'ERROR',
             'messages': error
-        })
+        });
     }
 
     /******** INI ALTERNATIF YANG LAIN *********
@@ -211,7 +211,7 @@ exports.delete = async (request, result) => {
             where: { 
                 id_merk: id
             }
-        })
+        });
 
         if(del) {
             //akan masuk sini jika ada row yang dihapus atau yang direturn > 0
@@ -232,6 +232,6 @@ exports.delete = async (request, result) => {
         result.status(500).json({
             'status': 'ERROR',
             'messages': error
-        })
+        });
     }   
 }

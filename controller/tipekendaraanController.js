@@ -11,19 +11,19 @@ exports.get = async (request, result) => {
             result.status(200).json({
                 'status': 'OK',
                 'tipe_kendaraan': tipe
-            })
+            });
         } else {
             result.status(200).json({
                 'status': 'OK',
                 'messages': 'EMPTY'
-            })
+            });
         }
     } catch (error) {
         console.log(error);
         result.status(500).json({
             'status': 'ERROR',
             'messages': error
-        })
+        });
     }
 }
 
@@ -39,7 +39,7 @@ exports.create = async (request, result) => {
                 attributes: ['id_tipe'],
                 limit: 1,
                 raw: true
-            })
+            });
 
             if (last_id.length == 0) {
                 //belum ada data tipe kendaraan
@@ -73,14 +73,14 @@ exports.create = async (request, result) => {
             id_tipe,
             nama_tipe,
             id_merk
-        })
+        });
 
         if (tipe) {
             result.status(201).json({
                 'status': 'OK',
                 'messages': 'Tipe Kendaraan berhasil ditambahkan',
                 'tipe_kendaraan': tipe
-            })
+            });
         }
     } catch (error) {
         //handle error saat create resource
@@ -88,7 +88,7 @@ exports.create = async (request, result) => {
         result.status(500).json({
             'status': 'ERROR',
             'messages': error
-        })
+        });
     };
 }
 
@@ -102,7 +102,7 @@ exports.show = async (request, result) => {
                 id_tipe
             },
             include: 'merk_kendaraan'
-        })
+        });
 
         if(tipe) {
             result.status(200).json({
@@ -113,14 +113,14 @@ exports.show = async (request, result) => {
             result.status(404).json({
                 'status': 'ERROR',
                 'message': 'Tipe kendaraan tidak ditemukan'
-            })
+            });
         }
     } catch (error) {
         console.log(error);
         result.status(500).json({
             'status': 'ERROR',
             'messages': error
-        })
+        });
     }
 }
 
@@ -151,14 +151,14 @@ exports.update = async (request, result) => {
             result.status(404).json({
                 'status': 'ERROR',
                 'message': 'Tipe Kendaraan tidak ditemukan'
-            })
+            });
         }
     } catch (error) {
         console.log(error);
         result.status(500).json({
             'status': 'ERROR',
             'messages': error
-        })
+        });
     }
 
     /******** INI ALTERNATIF YANG LAIN *********
@@ -218,7 +218,7 @@ exports.delete = async (request, result) => {
             where: { 
                 id_tipe: id
             }
-        })
+        });
 
         if(del) {
             //akan masuk sini jika ada row yang dihapus atau yang direturn > 0
@@ -239,6 +239,6 @@ exports.delete = async (request, result) => {
         result.status(500).json({
             'status': 'ERROR',
             'messages': error
-        })
+        });
     }   
 }
