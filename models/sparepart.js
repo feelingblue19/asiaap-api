@@ -2,6 +2,7 @@
 module.exports = (sequelize, DataTypes) => {
   const Sparepart = sequelize.define('Sparepart', {
     kode_sparepart: {
+      primaryKey: true,
       type: DataTypes.STRING
     } ,
     penempatan_sparepart: DataTypes.STRING,
