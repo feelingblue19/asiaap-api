@@ -1,5 +1,6 @@
 'use strict'
 const model = require('../models/index');
+const { validationResult } = require('express-validator/check');
 
 exports.get = async (request, result) => {
     try {
@@ -26,6 +27,14 @@ exports.get = async (request, result) => {
 }
 
 exports.create = async (request, result) => {
+    const errors = validationResult(request);
+
+    if(!errors.isEmpty()) {
+        return result.status(422).json({
+            'errors': errors.array()
+        });
+    }
+
     async function getID () {
         let id;
         try {
@@ -120,6 +129,14 @@ exports.show = async (request, result) => {
 }
 
 exports.update = async (request, result) => {
+    const errors = validationResult(request);
+
+    if(!errors.isEmpty()) {
+        return result.status(422).json({
+            'errors': errors.array()
+        });
+    }
+
     const id = request.params.id
     const {
         nama_merk

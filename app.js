@@ -7,7 +7,7 @@ const merkKendaraanRoutes = require('./route/merkKendaraanRoute');
 const tipeKendaraanRoutes = require('./route/tipeKendaraanRoute');
 const sparepartRoutes = require('./route/sparepartRoute');
 
-app.use(bodyParser.urlencoded({ extended: false}));
+app.use(bodyParser.urlencoded({ extended: true}));
 app.use(bodyParser.json());
 app.use(morgan('dev'));
 
