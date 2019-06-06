@@ -24,7 +24,7 @@ module.exports = (sequelize, DataTypes) => {
     TipeKendaraan.belongsToMany(models.Sparepart, {
       through: 'Kecocokans',
       foreignKey: 'id_tipe',
-      as: 'tipe_kendaraan'
+      as: 'sparepart'
     });
   };
   

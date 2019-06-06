@@ -31,6 +31,10 @@ const upload = multer({
 const sparepart = require('../controller/sparepartController');
 
 router.post('/', upload.single('gambar_sparepart') , sparepart.create);
+router.post('/:id', upload.single('gambar_sparepart') , sparepart.update);
+router.get('/:id', sparepart.show);
+router.get('/', sparepart.get);
+router.delete('/:id', sparepart.delete);
 
 module.exports = router;
 
