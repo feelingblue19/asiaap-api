@@ -70,39 +70,30 @@ exports.create = async (request, result) => {
 };
 
 exports.update = async (request, result) => {
-    const id = request.params.id;
+    const kode_sparepart = request.params.id;
 
     let req = request.body;
     req.gambar_sparepart = 'http://localhost:3000/uploads/' + request.file.filename;
 
     try {
-        const [upd] = await model.Sparepart.update(req, {
+        const sparepart = await model.Sparepart.findOne({
             where: {
-                kode_sparepart: id
+                kode_sparepart
             }
         });
-
-        if (upd) {
-
-            let sparepart = await model.Sparepart.findOne({
-                where: {
-                    kode_sparepart: id
-                }
-            });
-
-            try {
-                await sparepart.setTipe(tipe_kendaraan);
-            } catch (error) {
+    
+        if (sparepart) {
+            sparepart.update(req).then((res) => {
+                result.status(200).json({
+                    'status': 'OK',
+                    'message': 'Sparepart berhasil diupdate'
+                });
+            }).catch((err) => {
                 console.log(error);
                 result.status(500).json({
                     'status': 'ERROR',
-                    'messages': error
+                    'messages': err
                 });
-            }
-
-            result.status(200).json({
-                'status': 'OK',
-                'message': 'Sparepart berhasil diupdate'
             });
         } else {
             result.status(404).json({
@@ -111,12 +102,12 @@ exports.update = async (request, result) => {
             });
         }
     } catch (error) {
-        console.log(error);
-        result.status(500).json({
+        result.status(404).json({
             'status': 'ERROR',
-            'messages': error
+            'message': 'Sparepart tidak ditemukan'
         });
     }
+    
 };
 
 exports.show = async (request, result) => {
