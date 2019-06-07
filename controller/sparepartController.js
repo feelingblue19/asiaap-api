@@ -102,9 +102,9 @@ exports.update = async (request, result) => {
             });
         }
     } catch (error) {
-        result.status(404).json({
+        result.status(500).json({
             'status': 'ERROR',
-            'message': 'Sparepart tidak ditemukan'
+            'message': error
         });
     }
     
