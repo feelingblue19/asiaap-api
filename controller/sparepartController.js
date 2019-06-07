@@ -1,8 +1,17 @@
 'use strict' 
 
 const model = require('../models/index');
+const { validationResult } = require('express-validator/check');
 
 exports.create = async (request, result) => {
+    const errors = validationResult(request);
+
+    if(!errors.isEmpty()) {
+        return result.status(422).json({
+            'errors': errors.array()
+        });
+    }
+
     async function getID () {
         let id;
         try {
@@ -36,7 +45,15 @@ exports.create = async (request, result) => {
     try {
         let req = request.body;
         req.kode_sparepart = await getID();
-        req.gambar_sparepart = 'http://localhost:3000/uploads/' + request.file.filename;
+
+        if (request.file)
+            req.gambar_sparepart = 'http://localhost:3000/uploads/' + request.file.filename;
+        else {
+            result.status(400).json({
+                'status': 'ERROR',
+                'messages': 'File gambar sparepart tidak ada'
+            });
+        }
 
         const sparepart = await model.Sparepart.create(req);
         
@@ -72,9 +89,16 @@ exports.create = async (request, result) => {
 exports.update = async (request, result) => {
     const kode_sparepart = request.params.id;
 
-    let req = request.body;
-    req.gambar_sparepart = 'http://localhost:3000/uploads/' + request.file.filename;
+    const errors = validationResult(request);
 
+    if(!errors.isEmpty()) {
+        return result.status(422).json({
+            'errors': errors.array()
+        });
+    }
+
+    let req = request.body;
+    
     try {
         const sparepart = await model.Sparepart.findOne({
             where: {
@@ -83,13 +107,30 @@ exports.update = async (request, result) => {
         });
     
         if (sparepart) {
-            sparepart.update(req).then((res) => {
+            if (request.file)
+                req.gambar_sparepart = 'http://localhost:3000/uploads/' + request.file.filename;
+            else 
+                req.gambar_sparepart = sparepart.gambar_sparepart;
+    
+            sparepart.update(req).then( async (spr) => {
+                const tipe_kendaraan = JSON.parse(request.body.tipe_kendaraan);
+
+                try {
+                    await spr.setTipe(tipe_kendaraan);
+                } catch (error) {
+                    console.log(error);
+                    result.status(500).json({
+                        'status': 'ERROR',
+                        'messages': error
+                    });
+                }
+
                 result.status(200).json({
                     'status': 'OK',
                     'message': 'Sparepart berhasil diupdate'
                 });
             }).catch((err) => {
-                console.log(error);
+                console.log(err);
                 result.status(500).json({
                     'status': 'ERROR',
                     'messages': err
