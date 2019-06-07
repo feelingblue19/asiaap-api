@@ -203,30 +203,35 @@ exports.get = (request, result) => {
     });
 };
 
-exports.delete = (request, result) => {
-    const id = request.params.id;
+exports.delete = async (request, result) => {
+    const kode_sparepart = request.params.id;
 
-    model.Sparepart.destroy({
+    const sparepart = await model.Sparepart.findOne({
         where: {
-            kode_sparepart: id
+            kode_sparepart
         }
-    }).then((res) => {
-        if(res) {
-            result.status(200).json({
-                'status': 'OK',
-                'message': 'Sparepart berhasil dihapus'
-            });
-        } else {
-            result.status(404).json({
-                'status': 'ERROR',
-                'message': 'Sparepart tidak ditemukan'
-            });
-        }
-    }).catch((err) => {
-        console.log(err);
-        result.status(500).json({
-            'status': 'ERROR',
-            'message': err
-        });
     });
+
+    if (sparepart) {
+        try {
+            await sparepart.setTipe([]);
+            await sparepart.destroy();
+        } catch (error) {
+            console.log(error);
+            result.status(500).json({
+                'status': 'ERROR',
+                'messages': error
+            });
+        }
+
+        result.status(200).json({
+            'status': 'OK',
+            'message': 'Sparepart berhasil dihapus'
+        });
+    } else {
+        result.status(404).json({
+            'status': 'ERROR',
+            'message': 'Sparepart tidak ditemukan'
+        });
+    }
 };
