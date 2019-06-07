@@ -9,7 +9,7 @@ const validator = require('../validator/sparepartValidator');
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'uploads/')
+        cb(null, './public/uploads/')
     },
     filename: (req, file, cb) => {
         cb(null, new Date().toISOString().replace(/:/g, '-') + '-' + file.originalname);
@@ -33,7 +33,7 @@ const sparepart = require('../controller/sparepartController');
 router.post('/', (req, res, next) => {
     upload(req, res, (err) => {
         if (err) {
-            return res.status(400).json({
+            return res.status(422).json({
                 status: 'ERROR',
                 message: err.message
             });

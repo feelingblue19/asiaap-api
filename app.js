@@ -10,6 +10,7 @@ const sparepartRoutes = require('./route/sparepartRoute');
 app.use(bodyParser.urlencoded({ extended: true}));
 app.use(bodyParser.json());
 app.use(morgan('dev'));
+app.use('/public',express.static('public'));
 
 app.use('/merkkendaraan', merkKendaraanRoutes);
 app.use('/tipekendaraan', tipeKendaraanRoutes);

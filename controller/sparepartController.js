@@ -47,9 +47,9 @@ exports.create = async (request, result) => {
         req.kode_sparepart = await getID();
 
         if (request.file)
-            req.gambar_sparepart = 'http://localhost:3000/uploads/' + request.file.filename;
+            req.gambar_sparepart = request.file.path;
         else {
-            result.status(400).json({
+            return result.status(422).json({
                 'status': 'ERROR',
                 'messages': 'File gambar sparepart tidak ada'
             });
@@ -108,7 +108,7 @@ exports.update = async (request, result) => {
     
         if (sparepart) {
             if (request.file)
-                req.gambar_sparepart = 'http://localhost:3000/uploads/' + request.file.filename;
+                req.gambar_sparepart = request.file.path;
             else 
                 req.gambar_sparepart = sparepart.gambar_sparepart;
     
