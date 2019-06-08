@@ -1,6 +1,7 @@
 'use strict' 
 
 const model = require('../models/index');
+const sequelize = model.sequelize;
 const { validationResult } = require('express-validator/check');
 
 exports.create = async (request, result) => {
@@ -55,28 +56,21 @@ exports.create = async (request, result) => {
             });
         }
 
-        const sparepart = await model.Sparepart.create(req);
+        await sequelize.transaction( async transaction => {
+            const sparepart = await model.Sparepart.create(req, {transaction});
         
-        if (sparepart) {
-            const tipe_kendaraan = JSON.parse(request.body.tipe_kendaraan);
+            if (sparepart) {
+                const tipe_kendaraan = JSON.parse(request.body.tipe_kendaraan);
 
-            try {
-                await sparepart.setTipe(tipe_kendaraan);
-            } catch (error) {
-                console.log(error);
-                result.status(500).json({
-                    'status': 'ERROR',
-                    'messages': error
+                await sparepart.setTipe(tipe_kendaraan, {transaction});
+                
+                result.status(201).json({
+                    'status': 'OK',
+                    'messages': 'Sparepart berhasil ditambahkan',
+                    'sparepart': sparepart
                 });
             }
-
-            result.status(201).json({
-                'status': 'OK',
-                'messages': 'Sparepart berhasil ditambahkan',
-                'sparepart': sparepart
-            });
-
-        }
+        })
     } catch (error) {
         console.log(error);
         result.status(500).json({
@@ -98,57 +92,46 @@ exports.update = async (request, result) => {
     }
 
     let req = request.body;
-    
     try {
-        const sparepart = await model.Sparepart.findOne({
-            where: {
-                kode_sparepart
-            }
-        });
-    
-        if (sparepart) {
-            if (request.file)
-                req.gambar_sparepart = request.file.path;
-            else 
-                req.gambar_sparepart = sparepart.gambar_sparepart;
-    
-            sparepart.update(req).then( async (spr) => {
+        await sequelize.transaction( async transaction => {
+            let sparepart = await model.Sparepart.findOne({
+                where: {
+                    kode_sparepart
+                },
+                transaction
+            });
+
+            if (sparepart) {
+                if (request.file)
+                    req.gambar_sparepart = request.file.path;
+                else 
+                    req.gambar_sparepart = sparepart.gambar_sparepart;
+
+                    
+                const spr = await sparepart.update(req, {transaction})
+
                 const tipe_kendaraan = JSON.parse(request.body.tipe_kendaraan);
+                await sparepart.setTipe(tipe_kendaraan, {transaction});
 
-                try {
-                    await spr.setTipe(tipe_kendaraan);
-                } catch (error) {
-                    console.log(error);
-                    result.status(500).json({
-                        'status': 'ERROR',
-                        'messages': error
-                    });
-                }
-
-                result.status(200).json({
+                return result.status(200).json({
                     'status': 'OK',
                     'message': 'Sparepart berhasil diupdate'
                 });
-            }).catch((err) => {
-                console.log(err);
-                result.status(500).json({
+                    
+            } else {
+                result.status(404).json({
                     'status': 'ERROR',
-                    'messages': err
+                    'message': 'Sparepart tidak ditemukan'
                 });
-            });
-        } else {
-            result.status(404).json({
-                'status': 'ERROR',
-                'message': 'Sparepart tidak ditemukan'
-            });
-        }
+            }
+        })
     } catch (error) {
+        console.log(error);
         result.status(500).json({
             'status': 'ERROR',
-            'message': error
+            'messages': error
         });
     }
-    
 };
 
 exports.show = async (request, result) => {
@@ -195,7 +178,7 @@ exports.get = (request, result) => {
             });
         }
     }).catch((err) => {
-        console.log(error);
+        console.log(err);
         result.status(500).json({
             'status': 'ERROR',
             'message': err
@@ -206,32 +189,36 @@ exports.get = (request, result) => {
 exports.delete = async (request, result) => {
     const kode_sparepart = request.params.id;
 
-    const sparepart = await model.Sparepart.findOne({
-        where: {
-            kode_sparepart
-        }
-    });
-
-    if (sparepart) {
-        try {
-            await sparepart.setTipe([]);
-            await sparepart.destroy();
-        } catch (error) {
-            console.log(error);
-            result.status(500).json({
-                'status': 'ERROR',
-                'messages': error
+    try {
+        await sequelize.transaction( async transaction => {
+            const sparepart = await model.Sparepart.findOne({
+                where: {
+                    kode_sparepart
+                },
+                transaction
             });
-        }
+        
+            if (sparepart) {
+                await sparepart.setTipe([], {transaction});
+                await sparepart.destroy({transaction});
 
-        result.status(200).json({
-            'status': 'OK',
-            'message': 'Sparepart berhasil dihapus'
-        });
-    } else {
-        result.status(404).json({
+                result.status(200).json({
+                    'status': 'OK',
+                    'message': 'Sparepart berhasil dihapus'
+                });
+            } else {
+                result.status(404).json({
+                    'status': 'ERROR',
+                    'message': 'Sparepart tidak ditemukan'
+                });
+            }
+        })
+    } catch (error) {
+        console.log(error);
+        return result.status(500).json({
             'status': 'ERROR',
-            'message': 'Sparepart tidak ditemukan'
+            'messages': error
         });
     }
+    
 };
