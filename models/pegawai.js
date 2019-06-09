@@ -14,7 +14,16 @@ module.exports = (sequelize, DataTypes) => {
     jabatan_pegawai: DataTypes.STRING,
     username: DataTypes.STRING,
     password: DataTypes.STRING
-  }, {});
+  },{
+    defaultScope: {
+      attributes: {exclude: ['password']}
+    },
+    scopes: {
+      withPassword: {
+        attributes: {}
+      }
+    }
+  });
 
   Pegawai.associate = function(models) {
     Pegawai.belongsTo(models.Cabang, {
@@ -22,5 +31,14 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'id_cabang'
     });
   };
+
+  Pegawai.prototype.toJSON = function() {
+    let values = Object.assign({}, this.get());
+
+    delete values.password;
+    return values;
+  };
+
   return Pegawai;
 };
+

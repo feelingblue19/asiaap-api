@@ -3,9 +3,11 @@ const express = require('express'),
     bodyParser = require('body-parser')
     morgan = require('morgan');
 
-const merkKendaraanRoutes = require('./route/merkKendaraanRoute');
-const tipeKendaraanRoutes = require('./route/tipeKendaraanRoute');
-const sparepartRoutes = require('./route/sparepartRoute');
+const merkKendaraanRoute = require('./route/merkKendaraanRoute');
+const tipeKendaraanRoute = require('./route/tipeKendaraanRoute');
+const sparepartRoute = require('./route/sparepartRoute');
+const cabangRoute = require('./route/cabangRoute');
+const pegawaiRoute = require('./route/pegawaiRoute');
 
 app.use(bodyParser.urlencoded({ extended: true}));
 app.use(bodyParser.json());
@@ -25,9 +27,12 @@ app.use((req, res, next) => {
     next();
   });
 
-app.use('/merkkendaraan', merkKendaraanRoutes);
-app.use('/tipekendaraan', tipeKendaraanRoutes);
-app.use('/sparepart', sparepartRoutes);
 
+//ROUTE
+app.use('/merkkendaraan', merkKendaraanRoute);
+app.use('/tipekendaraan', tipeKendaraanRoute);
+app.use('/sparepart', sparepartRoute);
+app.use('/cabang', cabangRoute);
+app.use('/pegawai', pegawaiRoute);
 
 module.exports = app;

@@ -3,7 +3,7 @@
 const express = require('express');
 const router = express.Router();
 
-const tipeKendaraan = require('../controller/tipekendaraanController');
+const tipeKendaraan = require('../controller/tipeKendaraanController');
 
 const validator = require('../validator/tipeKendaraanValidator');
 
